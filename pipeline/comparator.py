@@ -1,18 +1,28 @@
-from pipeline import AgentState
+from . import AgentState
+
+def normalize_skill(skill: str) -> str:
+    return skill.strip().lower()
 
 def comparator_agent(state: AgentState) -> AgentState:
-    resume_skills = set(state["resume_profile"]["skills"])
-    jd_skills = set(state["jd_profile"]["required_skills"])
+    if "resume_profile" not in state or "jd_profile" not in state:
+        state["error"] = "Missing resume_profile or jd_profile"
+        return state
 
-    matched = list(resume_skills & jd_skills)
-    missing = list(jd_skills - resume_skills)
+    resume_skills_raw = state["resume_profile"].get("skills", [])
+    jd_skills_raw = state["jd_profile"].get("skills", [])
 
-    coverage = round(len(matched) / len(jd_skills) * 100, 1) if jd_skills else 0.0
+    resume_skills = {normalize_skill(skill) for skill in resume_skills_raw}
+    jd_skills = {normalize_skill(skill) for skill in jd_skills_raw}
+
+    matched = sorted(resume_skills & jd_skills)
+    missing = sorted(jd_skills - resume_skills)
+
+    similarity_score = round((len(matched) / len(jd_skills)) * 100, 1) if jd_skills else 0.0
 
     state["comparison"] = {
         "matched_skills": matched,
         "missing_skills": missing,
-        "coverage_pct": coverage
+        "similarity_score": similarity_score,
     }
 
     return state
