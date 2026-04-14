@@ -1,3 +1,5 @@
+import pdfplumber
+import docx
 import streamlit as st
 from pipeline.graph import build_graph
 from pipeline import AgentState
@@ -17,8 +19,24 @@ for msg in st.session_state.messages:
 
 if st.session_state.stage == "get_resume" and len(st.session_state.messages) == 0:
     with st.chat_message("assistant"):
-        st.write("Hi! Paste your resume below and I'll analyze how well it matches a job description.")
-    st.session_state.messages.append({"role": "assistant", "content": "Hi! Paste your resume below and I'll analyze how well it matches a job description."})
+        st.write("Hi! Upload your resume as PDF or Word doc, or paste it below.")
+    st.session_state.messages.append({"role": "assistant", "content": "Hi! Upload your resume as PDF or Word doc, or paste it below."})
+
+if st.session_state.stage == "get_resume":
+    uploaded_file = st.file_uploader("Upload resume PDF or Word doc", type=["pdf", "docx"])
+    if uploaded_file:
+        if uploaded_file.name.endswith(".pdf"):
+            with pdfplumber.open(uploaded_file) as pdf:
+                resume_text = "\n".join([page.extract_text() for page in pdf.pages])
+        else:
+            doc = docx.Document(uploaded_file)
+            resume_text = "\n".join([para.text for para in doc.paragraphs])
+        st.session_state.resume_text = resume_text
+        st.session_state.stage = "get_jd"
+        with st.chat_message("assistant"):
+            st.write("Got your resume! Now paste the job description.")
+        st.session_state.messages.append({"role": "assistant", "content": "Got your resume! Now paste the job description."})
+        st.rerun()
 
 if prompt := st.chat_input("Type here..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
