@@ -56,4 +56,5 @@ COVERAGE: {comparison["coverage_pct"]}%
     state["missing_skills"] = result["missing_skills"]
     state["feedback"] = result["feedback"]
 
+    state["retry_count"] = state.get("retry_count", 0) + 1
     return state

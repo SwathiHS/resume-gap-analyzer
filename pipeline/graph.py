@@ -3,15 +3,8 @@ from pipeline import AgentState
 from pipeline.extractor import extractor_agent
 from pipeline.comparator import comparator_agent
 from pipeline.scorer import feedback_agent
-
 def should_retry(state: AgentState) -> str:
-    coverage = state["comparison"]["coverage_pct"]
-    retries = state["retry_count"]
-    if coverage < 20 and retries < state["max_retries"]:
-        state["retry_count"] += 1
-        return "retry"
     return "proceed"
-
 def build_graph():
     graph = StateGraph(AgentState)
 

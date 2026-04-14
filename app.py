@@ -6,6 +6,7 @@ from pipeline import AgentState
 
 st.set_page_config(page_title="Resume Gap Analyzer", page_icon="🤖")
 st.title("🤖 Resume Gap Analyzer Bot")
+st.caption("Powered by Groq · llama-3.3-70b-versatile · LangGraph 3-Agent System")
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -77,3 +78,9 @@ if prompt := st.chat_input("Type here..."):
         with st.chat_message("assistant"):
             st.markdown(response)
         st.session_state.stage = "done"
+
+if st.session_state.stage == "done":
+    if st.button("🔄 Analyze another job description"):
+        st.session_state.stage = "get_jd"
+        st.session_state.jd_text = ""
+        st.rerun()
