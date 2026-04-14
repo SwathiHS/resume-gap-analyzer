@@ -1,23 +1,35 @@
-from typing import TypedDict, Optional
+from typing import TypedDict, NotRequired
+
+class Profile(TypedDict):
+    skills: list[str]
+    experience: list[str]
+    education: list[str]
+
+class Comparison(TypedDict):
+    matched_skills: list[str]
+    missing_skills: list[str]
+    similarity_score: float
 
 class AgentState(TypedDict):
     # inputs
     resume_text: str
     jd_text: str
-    
-    # filled by Agent 1 (Extractor)
-    resume_profile: Optional[dict]
-    jd_profile: Optional[dict]
-    
-    # filled by Agent 2 (Comparator)
-    comparison: Optional[dict]
-    
-    # retry logic
+
+    # agent outputs
+    resume_profile: NotRequired[Profile]
+    jd_profile: NotRequired[Profile]
+    comparison: NotRequired[Comparison]
+
+    # retry
     retry_count: int
     max_retries: int
-    
-    # filled by Agent 3 (Feedback)
-    fit_score: Optional[int]
-    label: Optional[str]
-    missing_skills: Optional[list]
-    feedback: Optional[str]
+
+    # final output
+    fit_score: NotRequired[int]
+    label: NotRequired[str]
+    missing_skills: NotRequired[list[str]]
+    feedback: NotRequired[str]
+
+    # debugging
+    current_step: NotRequired[str]
+    error: NotRequired[str]
