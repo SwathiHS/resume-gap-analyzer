@@ -22,6 +22,7 @@ You upload your resume, paste a job description, and the system gives you:
 
 ## 2. Code Structure
 
+```
 resume-gap-analyzer/
 │
 ├── pipeline/
@@ -36,7 +37,7 @@ resume-gap-analyzer/
 ├── requirements.txt         # Python dependencies
 ├── .env.example             # Example environment variables
 └── README.md
-
+```
 **Agent 1 — Extractor:** Scans resume and job description for skills using keyword matching.
 
 **Agent 2 — Comparator:** Finds matched and missing skills using pure set logic. No AI.
